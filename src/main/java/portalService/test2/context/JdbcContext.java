@@ -4,10 +4,7 @@ import portalService.test2.statement.StatementStrategy;
 import portalService.test2.user.User;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class JdbcContext {
 
@@ -110,6 +107,39 @@ public class JdbcContext {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public void update(String sql, Object[] params) throws SQLException {
+        StatementStrategy statementStrategy = con -> {
+            PreparedStatement psmt = con.prepareStatement(sql);
+            for (int i = 0; i < params.length; i++) {
+                psmt.setObject(i+1,params[i]);
+            }
+            return psmt;
+        };
+        jdbcContextForUpdate(statementStrategy);
+    }
+
+    public User find(String sql, Object[] params) throws SQLException {
+        StatementStrategy statementStrategy = con -> {
+            PreparedStatement psmt = con.prepareStatement(sql);
+            for (int i = 0; i < params.length; i++) {
+                psmt.setObject(i+1,params[i]);
+            }
+            return psmt;
+        };
+        return jdbcContextForFind(statementStrategy);
+    }
+
+    public void insert(User user, String sql, Object[] params) throws SQLException {
+        StatementStrategy statementStrategy = con -> {
+            PreparedStatement psmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            for (int i = 0; i < params.length; i++) {
+                psmt.setObject(i+1,params[i]);
+            }
+            return psmt;
+        };
+        jdbcContextForInsert(user,statementStrategy);
     }
 
 }
