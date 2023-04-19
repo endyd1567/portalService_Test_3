@@ -2,6 +2,9 @@ package portalService.test2.user;
 
 import portalService.test2.connection.ConnectionMaker;
 import portalService.test2.connection.JejuConnectionMaker;
+import portalService.test2.statement.FindStatementStrategy;
+import portalService.test2.statement.StatementStrategy;
+import portalService.test2.statement.UpdateStatementStrategy;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -91,17 +94,17 @@ public class UserDao {
     }
 
     public void update(User user) throws SQLException {
+        StatementStrategy statementStrategy = new UpdateStatementStrategy(user);
+        jdbcContextForUpdate(statementStrategy);
+    }
 
+    private void jdbcContextForUpdate(StatementStrategy statementStrategy) throws SQLException {
         Connection con = null;
         PreparedStatement psmt = null;
 
         try {
             con = dataSource.getConnection();
-            String sql = "update userinfo set name=? , password=? where id=? ";
-            psmt = con.prepareStatement(sql);
-            psmt.setString(1, user.getName());
-            psmt.setString(2,user.getPassword());
-            psmt.setLong(3,user.getId());
+            psmt = statementStrategy.makeStatement(con);
             psmt.executeUpdate();
         }finally {
             try {
