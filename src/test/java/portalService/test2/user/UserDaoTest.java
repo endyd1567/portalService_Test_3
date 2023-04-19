@@ -2,6 +2,8 @@ package portalService.test2.user;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import portalService.test2.connection.HallaConnectionMaker;
+import portalService.test2.connection.JejuConnectionMaker;
 
 import java.sql.SQLException;
 
@@ -15,7 +17,8 @@ class UserDaoTest {
         Long id = 1l;
         String name = "umdu";
         String password = "1234";
-        UserDao userDao = new JejuUserDao();
+        JejuConnectionMaker jejuConnectionMaker = new JejuConnectionMaker();
+        UserDao userDao = new UserDao(jejuConnectionMaker);
         User user = userDao.findById(id);
 
         assertThat(user.getId()).isEqualTo(id);
@@ -30,7 +33,8 @@ class UserDaoTest {
         String password = "1234";
         user.setName(name);
         user.setPassword(password);
-        UserDao userDao = new JejuUserDao();
+        JejuConnectionMaker jejuConnectionMaker = new JejuConnectionMaker();
+        UserDao userDao = new UserDao(jejuConnectionMaker);
         userDao.insert(user);
 
         User insertedUser = userDao.findById(user.getId());
@@ -46,7 +50,8 @@ class UserDaoTest {
         Long id = 1l;
         String name = "umdu";
         String password = "1234";
-        UserDao userDao = new HallaUserDao();
+        HallaConnectionMaker hallaConnectionMaker = new HallaConnectionMaker();
+        UserDao userDao = new UserDao(hallaConnectionMaker);
         User user = userDao.findById(id);
 
         assertThat(user.getId()).isEqualTo(id);
@@ -61,7 +66,8 @@ class UserDaoTest {
         String password = "1234";
         user.setName(name);
         user.setPassword(password);
-        UserDao userDao = new HallaUserDao();
+        HallaConnectionMaker hallaConnectionMaker = new HallaConnectionMaker();
+        UserDao userDao = new UserDao(hallaConnectionMaker);
         userDao.insert(user);
 
         User insertedUser = userDao.findById(user.getId());
